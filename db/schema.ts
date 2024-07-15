@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { boolean, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core'
+import { boolean, integer, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core'
 
 export const users = pgTable("users", {
     id: serial('id').primaryKey(),
@@ -13,4 +13,14 @@ export const users = pgTable("users", {
     updatedAt: timestamp('updated_at').default(sql`now()`),
 });
 
+// Define the verificationTokens table with a foreign key referencing the users table
+export const verificationTokens = pgTable("verification_tokens", {
+    id: serial('id').primaryKey(),
+    userId: serial("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),  // Foreign key reference
+    token: integer("token").notNull().unique(),
+    createdAt: timestamp('created_at').defaultNow(),
+    expiredAt: timestamp('expired_at').default(sql`now() + interval '10 minutes'`),
+});
+
 export type InsertUser = typeof users.$inferInsert;
+export type InsertVerificationToken = typeof verificationTokens.$inferInsert;

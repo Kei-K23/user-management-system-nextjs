@@ -1,4 +1,6 @@
+import { generateRandomNumber } from "@/lib/utils";
 import { insertUser } from "@/services/user";
+import { insertVerificationToken } from "@/services/verification-token";
 
 export async function POST(request: Request) {
     const jsonData = await request.json();
@@ -18,7 +20,13 @@ export async function POST(request: Request) {
         email,
         phone,
         password,
-    })
+    });
+    const verificationToken = generateRandomNumber();
+
+    await insertVerificationToken({
+        userId: newUser[0].id,
+        token: verificationToken,
+    });
 
     return Response.json({ data: newUser }, { status: 201 });
 }
