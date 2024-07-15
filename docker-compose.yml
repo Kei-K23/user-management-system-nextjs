@@ -1,0 +1,16 @@
+services:
+  postgres:
+    container_name: user_management_system_nextjs
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: ums_db
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres:
