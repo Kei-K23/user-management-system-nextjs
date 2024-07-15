@@ -1,10 +1,13 @@
 "use client";
 
 import React from "react";
-import { Form, Input, Button, Row, Col, FormProps, Select } from "antd";
+import { Form, Input, Button, Row, Col, Select } from "antd";
 import Link from "next/link";
 import { useMounted } from "@/lib/custom-hook";
 import { LoadingOutlined } from "@ant-design/icons";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 type FieldType = {
   username: string;
@@ -18,16 +21,42 @@ type FieldType = {
 const ResponsiveForm = () => {
   const { Option } = Select;
   const isMounted = useMounted();
+  const router = useRouter();
 
-  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    console.log("Success:", values);
+  const onFinish = async (values: FieldType) => {
+    if (values.password !== values.confirmPassword) {
+      throw new Error("Passwords do not match");
+    }
+
+    const res = await fetch("http://localhost:3000/api/v1/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        username: values.username,
+        email: values.email,
+        phone: values.prefix + values.phone,
+        password: values.password,
+      }),
+    });
+    if (!res.ok) {
+      throw new Error("Failed to create user");
+    }
+    return await res.json();
   };
 
-  const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
-    errorInfo
-  ) => {
-    console.log("Failed:", errorInfo);
-  };
+  const { mutate, isPending } = useMutation({
+    mutationFn: onFinish,
+    onSuccess: (value) => {
+      toast.error("User successfully registered");
+      router.push("/account-verify");
+    },
+    onError: (error) => {
+      toast.error("Failed to create user");
+    },
+  });
 
   const prefixSelector = (
     <Form.Item<FieldType> name="prefix" noStyle>
@@ -49,7 +78,7 @@ const ResponsiveForm = () => {
   );
 
   return (
-    <div className="w-full h-full flex flex-col justify-start items-center pt-20 md:pt-32">
+    <div className="w-full h-full flex flex-col justify-start items-center pt-10 md:pt-20">
       <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-3">
         Welcome Back!
       </h1>
@@ -64,8 +93,7 @@ const ResponsiveForm = () => {
               name="basic"
               layout="vertical"
               initialValues={{ remember: true }}
-              onFinish={onFinish}
-              onFinishFailed={onFinishFailed}
+              onFinish={mutate}
               autoComplete="off"
               className="mt-4"
               style={{ padding: "0 2rem" }}
@@ -77,7 +105,7 @@ const ResponsiveForm = () => {
                   { required: true, message: "Please input your username!" },
                 ]}
               >
-                <Input />
+                <Input disabled={isPending} />
               </Form.Item>
               <Form.Item<FieldType>
                 label="Email"
@@ -87,7 +115,7 @@ const ResponsiveForm = () => {
                   { type: "email", message: "The input is not valid E-mail!" },
                 ]}
               >
-                <Input />
+                <Input disabled={isPending} />
               </Form.Item>
               <Form.Item<FieldType>
                 label="Phone Number"
@@ -99,7 +127,11 @@ const ResponsiveForm = () => {
                   },
                 ]}
               >
-                <Input addonBefore={prefixSelector} style={{ width: "100%" }} />
+                <Input
+                  disabled={isPending}
+                  addonBefore={prefixSelector}
+                  style={{ width: "100%" }}
+                />
               </Form.Item>
 
               <Form.Item<FieldType>
@@ -109,7 +141,7 @@ const ResponsiveForm = () => {
                   { required: true, message: "Please input your password!" },
                 ]}
               >
-                <Input.Password />
+                <Input.Password disabled={isPending} />
               </Form.Item>
               <Form.Item<FieldType>
                 label="Confirm Password"
@@ -121,13 +153,17 @@ const ResponsiveForm = () => {
                   },
                 ]}
               >
-                <Input.Password />
+                <Input.Password disabled={isPending} />
               </Form.Item>
               <div className="my-3 mb-5 flex justify-between items-center">
-                <Button type="primary" htmlType="submit">
-                  Sign up
+                <Button disabled={isPending} type="primary" htmlType="submit">
+                  {isPending ? (
+                    <LoadingOutlined className="text-2xl " />
+                  ) : (
+                    "Sign up"
+                  )}
                 </Button>
-                <Link href="/sign-in">
+                <Link href="/sign-in" aria-disabled={isPending}>
                   Already have an account! Sign in here
                 </Link>
               </div>

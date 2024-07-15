@@ -1,11 +1,11 @@
 import { insertUser } from "@/services/user";
 
 export async function POST(request: Request) {
-    const formData = await request.formData();
-    const username = formData.get('username')?.toString();
-    const email = formData.get('email')?.toString();
-    const phone = formData.get('phone')?.toString();
-    const password = formData.get('password')?.toString();
+    const jsonData = await request.json();
+    const username = jsonData.username;
+    const email = jsonData.email;
+    const phone = jsonData.phone;
+    const password = jsonData.password;
 
     // Check validation for form data
     if (!username || !email || !phone || !password) {
