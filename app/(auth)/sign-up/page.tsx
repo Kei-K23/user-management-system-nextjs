@@ -8,6 +8,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { useLocalStorage } from "react-use";
 
 type FieldType = {
   username: string;
@@ -50,11 +51,13 @@ const ResponsiveForm = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: onFinish,
     onSuccess: (value) => {
-      toast.error("User successfully registered");
+      toast.success("User successfully registered");
+      // Store the user's id in local storage
+      localStorage.setItem("ums-user-id", value.data[0].id);
       // Navigate to account verification page
-      router.push("/account-verification");
+      router.push(`/account-verification`);
     },
-    onError: (error) => {
+    onError: () => {
       toast.error("Failed to create user");
     },
   });

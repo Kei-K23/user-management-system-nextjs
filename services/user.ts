@@ -1,5 +1,6 @@
 import { db } from "@/db/drizzle";
 import { InsertUser, users } from "@/db/schema";
+import { sql } from "drizzle-orm";
 
 export const insertUser = async (user: InsertUser) => {
     return await db.insert(users).values(user).returning({
@@ -12,4 +13,9 @@ export const insertUser = async (user: InsertUser) => {
         createdAt: users.createdAt,
         updatedAt: users.updatedAt,
     });
+}
+
+export const selectUserById = async (id: number) => {
+    return await db.select().from(users)
+        .where(sql`${users.id} = ${id}`);
 }
