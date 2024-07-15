@@ -3,15 +3,14 @@
 import React from 'react';
 import { Form, Input, Button, Row, Col, FormProps, Checkbox } from 'antd';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 type FieldType = {
     email: string;
-    password: string;
-    remember?: boolean;
 };
 
-export default function SignInPage() {
-
+export default function ForgotPasswordPage() {
+    const router = useRouter();
     const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
         console.log('Success:', values);
     };
@@ -20,11 +19,14 @@ export default function SignInPage() {
         console.log('Failed:', errorInfo);
     };
 
+    const onBackClick = () => {
+        router.back();
+    }
 
     return (
         <div className='w-full h-full flex flex-col justify-start items-center pt-20 md:pt-32'>
-            <h1 className='text-xl md:text-2xl lg:text-3xl font-bold mb-3'>Welcome Back!</h1>
-            <p className='text-lg'>Login in or create new account</p>
+            <h1 className='text-xl md:text-2xl lg:text-3xl font-bold mb-3'>Forgot Password!</h1>
+            <p className='text-lg'>Enter your email and we will send you a link to reset your password</p>
             <Row justify="center" className='border-2 border-neutral-100 rounded-lg w-[350px] sm:w-[500px] md:w-[600px] mt-5'>
                 <Col xs={24} sm={24} md={24} lg={24}>
                     <Form
@@ -47,27 +49,13 @@ export default function SignInPage() {
                         >
                             <Input />
                         </Form.Item>
-                        <Form.Item<FieldType>
-                            label="Password"
-                            name="password"
-                            rules={[{ required: true, message: 'Please input your password!' }]}
-                        >
-                            <Input.Password />
-                        </Form.Item>
-                        <Form.Item>
-                            <Form.Item<FieldType> name="remember" valuePropName="checked" noStyle>
-                                <Checkbox >Remember me</Checkbox>
-                            </Form.Item>
-
-                            <Link href="/forgot-password">
-                                Forgot password
-                            </Link>
-                        </Form.Item>
                         <Form.Item className='flex justify-between items-center'>
                             <Button type="primary" htmlType="submit" >
-                                Log in
+                                Submit
                             </Button>
-                            <Link href="/sign-up" >Don&apos;t have an account! Register here</Link>
+                            <Button onClick={onBackClick} type="link" htmlType="button" >
+                                Back
+                            </Button>
                         </Form.Item>
                     </Form>
                 </Col>

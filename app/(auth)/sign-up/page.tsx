@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Form, Input, Button, Row, Col, FormProps, Select } from 'antd';
+import Link from 'next/link';
 
 type FieldType = {
     username: string;
@@ -95,6 +96,7 @@ const ResponsiveForm = () => {
                             <Button type="primary" htmlType="submit">
                                 Sign up
                             </Button>
+                            <Link href="/sign-in" >Already have an account! Sign in here</Link>
                         </Form.Item>
                     </Form>
                 </Col>
