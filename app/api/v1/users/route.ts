@@ -4,6 +4,7 @@ import VerificationTokenEmail from "@/services/mail/verification-email";
 import { insertUser } from "@/services/user";
 import { insertVerificationToken } from "@/services/verification-token";
 import { render } from "@react-email/components";
+import * as argon2 from "argon2";
 
 export async function POST(request: Request) {
     const jsonData = await request.json();
@@ -17,13 +18,17 @@ export async function POST(request: Request) {
         return Response.json({ error: 'Invalid form data' }, { status: 400 });
     }
 
+    // Hash the password
+    const hashPassword = await argon2.hash(password);
     // Insert user to your database here
     const newUser = await insertUser({
         username: username,
         email,
         phone,
-        password,
+        password: hashPassword,
     });
+
+    // Generate a random verification token
     const verificationToken = generateRandomNumber();
 
     // Create a new user account verification token

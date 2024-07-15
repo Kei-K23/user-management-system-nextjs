@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-const PUBLIC_ROUTES = ['/sign-in', '/sign-up', '/forgot-password'];
+const PUBLIC_ROUTES = ['/sign-in', '/sign-up', '/forgot-password', '/account-verification'];
 
 export function middleware(request: NextRequest) {
     // TODO: change with actual auth cookie name

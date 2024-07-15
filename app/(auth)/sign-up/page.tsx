@@ -51,7 +51,8 @@ const ResponsiveForm = () => {
     mutationFn: onFinish,
     onSuccess: (value) => {
       toast.error("User successfully registered");
-      router.push("/account-verify");
+      // Navigate to account verification page
+      router.push("/account-verification");
     },
     onError: (error) => {
       toast.error("Failed to create user");
@@ -158,7 +159,7 @@ const ResponsiveForm = () => {
               <div className="my-3 mb-5 flex justify-between items-center">
                 <Button disabled={isPending} type="primary" htmlType="submit">
                   {isPending ? (
-                    <LoadingOutlined className="text-2xl " />
+                    <LoadingOutlined className="text-lg " />
                   ) : (
                     "Sign up"
                   )}

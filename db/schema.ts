@@ -16,7 +16,7 @@ export const users = pgTable("users", {
 // Define the verificationTokens table with a foreign key referencing the users table
 export const verificationTokens = pgTable("verification_tokens", {
     id: serial('id').primaryKey(),
-    userId: serial("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),  // Foreign key reference
+    userId: serial("user_id").notNull().references(() => users.id, { onDelete: 'set null' }),  // Foreign key reference
     token: integer("token").notNull().unique(),
     createdAt: timestamp('created_at').defaultNow(),
     expiredAt: timestamp('expired_at').default(sql`now() + interval '10 minutes'`),

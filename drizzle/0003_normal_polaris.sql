@@ -1,1 +1,0 @@
-ALTER TABLE "verification_tokens" ADD COLUMN "validated_at" timestamp;
