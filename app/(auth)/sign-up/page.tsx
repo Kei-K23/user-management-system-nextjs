@@ -25,7 +25,7 @@ const ResponsiveForm = () => {
     };
 
     const prefixSelector = (
-        <Form.Item name="prefix" noStyle>
+        <Form.Item<FieldType> name="prefix" noStyle>
             <Select style={{ width: 70 }}>
                 <Option value="+95" key={"+95"}>+95</Option>
                 <Option value="+75" key={"+75"}>+75</Option>
@@ -52,14 +52,14 @@ const ResponsiveForm = () => {
                         style={{ padding: '0 2rem' }}
                     >
 
-                        <Form.Item
+                        <Form.Item<FieldType>
                             label="Username"
                             name="username"
                             rules={[{ required: true, message: 'Please input your username!' }]}
                         >
                             <Input />
                         </Form.Item>
-                        <Form.Item
+                        <Form.Item<FieldType>
                             label="Email"
                             name="email"
                             rules={[
@@ -69,8 +69,7 @@ const ResponsiveForm = () => {
                         >
                             <Input />
                         </Form.Item>
-
-                        <Form.Item
+                        <Form.Item<FieldType>
                             label="Phone Number"
                             name="phone"
                             rules={[{ required: true, message: 'Please input your phone number!' }]}
@@ -78,22 +77,20 @@ const ResponsiveForm = () => {
                             <Input addonBefore={prefixSelector} style={{ width: '100%' }} />
                         </Form.Item>
 
-                        <Form.Item
+                        <Form.Item<FieldType>
                             label="Password"
                             name="password"
                             rules={[{ required: true, message: 'Please input your password!' }]}
                         >
                             <Input.Password />
                         </Form.Item>
-
-                        <Form.Item
+                        <Form.Item<FieldType>
                             label="Confirm Password"
                             name="confirmPassword"
                             rules={[{ required: true, message: 'Please input your confirm password!' }]}
                         >
                             <Input.Password />
                         </Form.Item>
-
                         <Form.Item>
                             <Button type="primary" htmlType="submit">
                                 Sign up
