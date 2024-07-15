@@ -20,6 +20,7 @@ export const verificationTokens = pgTable("verification_tokens", {
     token: integer("token").notNull().unique(),
     createdAt: timestamp('created_at').defaultNow(),
     expiredAt: timestamp('expired_at').default(sql`now() + interval '10 minutes'`),
+    validatedAt: timestamp('validated_at')
 });
 
 export type InsertUser = typeof users.$inferInsert;

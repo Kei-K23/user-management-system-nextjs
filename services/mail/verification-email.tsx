@@ -11,8 +11,7 @@ import {
 import * as React from "react";
 
 interface VerificationTokenEmailProps {
-  verificationCode: string;
-  url: string;
+  verificationCode: number;
 }
 
 export default function VerificationTokenEmail({

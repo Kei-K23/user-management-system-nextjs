@@ -1,6 +1,9 @@
 import { generateRandomNumber } from "@/lib/utils";
+import { sendEmail } from "@/services/mail/mail-backend";
+import VerificationTokenEmail from "@/services/mail/verification-email";
 import { insertUser } from "@/services/user";
 import { insertVerificationToken } from "@/services/verification-token";
+import { render } from "@react-email/components";
 
 export async function POST(request: Request) {
     const jsonData = await request.json();
@@ -23,9 +26,20 @@ export async function POST(request: Request) {
     });
     const verificationToken = generateRandomNumber();
 
+    // Create a new user account verification token
     await insertVerificationToken({
         userId: newUser[0].id,
         token: verificationToken,
+    });
+
+    // Render email template
+    const emailHtml = render(VerificationTokenEmail({ verificationCode: verificationToken }));
+
+    // Send email
+    sendEmail({
+        emailHtml,
+        subject: "Account Verification",
+        to: email
     });
 
     return Response.json({ data: newUser }, { status: 201 });
