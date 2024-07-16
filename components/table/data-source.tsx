@@ -1,4 +1,6 @@
+import React from 'react';
 import { TableColumnsType } from "antd";
+import { Button } from "antd";
 
 // User data structure
 export interface UserData {
@@ -128,6 +130,15 @@ const columns: TableColumnsType<UserData> = [
         render: (date: Date) => date.toLocaleString(),
         sorter: (a, b) => a.updatedAt.getTime() - b.updatedAt.getTime(),
     },
+    {
+        title: 'Actions',
+        key: 'actions',
+        render: (_: any, record: any) => {
+            return <span>
+                hello
+            </span>
+        },
+    }
 ];
 
 // Export dataSource and columns

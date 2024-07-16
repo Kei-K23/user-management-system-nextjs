@@ -6,12 +6,13 @@ import { LoadingOutlined } from '@ant-design/icons'
 import { useMutation } from '@tanstack/react-query'
 import { Button } from 'antd'
 import { useRouter } from 'next/navigation'
-import React from 'react'
+import React, { useState } from 'react'
 import toast from 'react-hot-toast'
 
 export default function MainPage() {
     const isMounted = useMounted();
     const router = useRouter();
+    const [open, setOpen] = useState(false);
 
     const logoutFn = async () => {
         const res = await fetch("http://localhost:3000/api/v1/auth/sign-out", {
@@ -40,7 +41,7 @@ export default function MainPage() {
             <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-3">
                 Welcome Back, Arkar Min
             </h1>
-            <Button type="primary" onClick={() => onLogout()}>
+            <Button danger type="primary" onClick={() => onLogout()}>
                 {logoutPending ? (
                     <LoadingOutlined className="text-lg " />
                 ) : (
@@ -48,7 +49,10 @@ export default function MainPage() {
                 )}
             </Button>
             {
-                isMounted ? (<DataTable />) : (
+                isMounted ? (<>
+                    <DataTable />
+
+                </>) : (
                     <p>loading..</p>
                 )
             }
