@@ -19,6 +19,7 @@
     "antd": "^5.19.1",
     "argon2": "^0.40.3",
     "drizzle-orm": "^0.32.0",
+    "jose": "^5.6.3",
     "next": "14.2.5",
     "nodemailer": "^6.9.14",
     "pg": "^8.12.0",
@@ -29,6 +30,7 @@
     "react-verification-input": "^4.1.2"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20",
     "@types/nodemailer": "^6.4.15",
     "@types/pg": "^8.11.6",

@@ -1,9 +1,12 @@
 "use client";
 
-import { Form, Input, Button, Row, Col, FormProps, Checkbox } from "antd";
+import { Form, Input, Button, Row, Col, Checkbox } from "antd";
 import Link from "next/link";
 import { LoadingOutlined, LockOutlined, MailOutlined } from "@ant-design/icons";
 import { useMounted } from "@/lib/custom-hook";
+import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 type FieldType = {
   email: string;
@@ -13,16 +16,37 @@ type FieldType = {
 
 export default function SignInPage() {
   const isMounted = useMounted();
+  const router = useRouter();
 
-  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    console.log("Success:", values);
+  const onFinish = async (values: FieldType) => {
+    const res = await fetch("http://localhost:3000/api/v1/auth/sign-in", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        email: values.email,
+        password: values.password,
+      }),
+    });
+    if (!res.ok) {
+      throw new Error("Failed to login user");
+    }
+    return await res.json();
   };
 
-  const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
-    errorInfo
-  ) => {
-    console.log("Failed:", errorInfo);
-  };
+  const { mutate, isPending } = useMutation({
+    mutationFn: onFinish,
+    onSuccess: () => {
+      toast.success("User successfully login");
+      // Navigate to home page
+      router.push(`/`);
+    },
+    onError: () => {
+      toast.error("Failed to login user");
+    },
+  });
 
   return (
     <div className="w-full h-full flex flex-col justify-start items-center pt-20 md:pt-32">
@@ -40,8 +64,7 @@ export default function SignInPage() {
               name="basic"
               layout="vertical"
               initialValues={{ remember: true }}
-              onFinish={onFinish}
-              onFinishFailed={onFinishFailed}
+              onFinish={mutate}
               autoComplete="off"
               className="mt-4"
               style={{ padding: "0 2rem" }}
@@ -87,7 +110,11 @@ export default function SignInPage() {
               </div>
               <Form.Item>
                 <Button type="primary" htmlType="submit" className="w-full">
-                  Sign in
+                  {isPending ? (
+                    <LoadingOutlined className="text-lg " />
+                  ) : (
+                    "Sign in"
+                  )}
                 </Button>
                 <div className="my-2" />
                 Or <Link href="/sign-up">Register here</Link>
