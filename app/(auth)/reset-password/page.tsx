@@ -23,7 +23,7 @@ const ResetPasswordPage = () => {
       throw new Error("Passwords do not match");
     }
 
-    const res = await fetch("http://localhost:3000/api/v1/auth/sign-up", {
+    const res = await fetch("http://localhost:3000/api/v1/auth/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

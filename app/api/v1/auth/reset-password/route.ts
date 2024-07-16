@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     }
 
     // Insert user to your database here
-    const token = await selectVerificationTokenByToken(code, userId, EmailCategory.EMAIL_VERIFICATION);
+    const token = await selectVerificationTokenByToken(code, userId, EmailCategory.PASSWORD_RESET);
 
     if (!token.length) {
         return Response.json({ error: 'Invalid verification code or expired verification code' }, { status: 401 });

@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     await insertVerificationToken({
         userId: newUser[0].id,
         token: verificationToken,
-        category: EmailCategory.PASSWORD_RESET
+        category: EmailCategory.EMAIL_VERIFICATION
     });
 
     // Render email template

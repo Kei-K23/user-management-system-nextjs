@@ -5,6 +5,8 @@ import { Form, Input, Button, Row, Col, FormProps } from "antd";
 import { useRouter } from "next/navigation";
 import { useMounted } from "@/lib/custom-hook";
 import { LoadingOutlined } from "@ant-design/icons";
+import toast from "react-hot-toast";
+import { useMutation } from "@tanstack/react-query";
 
 type FieldType = {
   email: string;
@@ -13,15 +15,45 @@ type FieldType = {
 export default function ForgotPasswordPage() {
   const isMounted = useMounted();
   const router = useRouter();
-  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    console.log("Success:", values);
+
+  const onFinish = async (values: FieldType) => {
+    const userId = localStorage.getItem("ums-user-id");
+    if (!userId) {
+      throw new Error("User id is missing");
+    }
+
+    if (!values.email) {
+      return;
+    }
+
+    const res = await fetch("http://localhost:3000/api/v1/auth/reset-password/send-email", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        email: values.email,
+        userId
+      }),
+    });
+    if (!res.ok) {
+      throw new Error("Failed to send reset password email to user");
+    }
+    return await res.json();
   };
 
-  const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
-    errorInfo
-  ) => {
-    console.log("Failed:", errorInfo);
-  };
+  const { mutate, isPending } = useMutation({
+    mutationFn: onFinish,
+    onSuccess: (value) => {
+      toast.success("Reset password email send to user");
+
+      router.push(`/reset-password`);
+    },
+    onError: () => {
+      toast.error("Failed to send reset password email to user");
+    },
+  });
 
   const onBackClick = () => {
     router.back();
@@ -45,8 +77,7 @@ export default function ForgotPasswordPage() {
               name="basic"
               layout="vertical"
               initialValues={{ remember: true }}
-              onFinish={onFinish}
-              onFinishFailed={onFinishFailed}
+              onFinish={mutate}
               autoComplete="off"
               className="mt-4"
               style={{ padding: "0 2rem" }}

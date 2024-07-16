@@ -17,6 +17,10 @@ export async function POST(request: Request) {
         return Response.json({ error: 'Invalid user' }, { status: 401 });
     }
 
+    if (user[0].email !== email) {
+        return Response.json({ error: 'Invalid email' }, { status: 401 });
+    }
+
     // Generate a random verification token
     const verificationToken = generateRandomNumber();
 

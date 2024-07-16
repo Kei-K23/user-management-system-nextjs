@@ -12,6 +12,10 @@ export async function POST(request: Request) {
     // TODO: handle user existing
     const user = await selectUserById(userId);
 
+    if (!user.length) {
+        return Response.json({ error: 'Invalid user' }, { status: 401 });
+    }
+
     // Generate a random verification token
     const verificationToken = generateRandomNumber();
 
@@ -19,7 +23,7 @@ export async function POST(request: Request) {
     await insertVerificationToken({
         userId: user[0].id,
         token: verificationToken,
-        category: EmailCategory.PASSWORD_RESET
+        category: EmailCategory.EMAIL_VERIFICATION
     });
 
     // Render email template
