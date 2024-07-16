@@ -3,14 +3,26 @@
 import DataTable from "@/components/table/data-table";
 import { useMounted } from "@/lib/custom-hook";
 import { LoadingOutlined } from "@ant-design/icons";
-import { useMutation } from "@tanstack/react-query";
-import { Avatar, Button, Card } from "antd";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Avatar, Button, Card, Form, Input, Modal, Select } from "antd";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import toast from "react-hot-toast";
 
+type UserFieldType = {
+  username: string;
+  email: string;
+  phone: string;
+  prefix: string;
+  role: string;
+};
+
 export default function MainPage() {
+  const { Option } = Select;
   const isMounted = useMounted();
   const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   const logoutFn = async () => {
     const res = await fetch("http://localhost:3000/api/v1/auth/sign-out", {
@@ -22,13 +34,70 @@ export default function MainPage() {
     return await res.json();
   };
 
+  const getCurrentUserFn = async () => {
+    const res = await fetch("http://localhost:3000/api/v1/users/me", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    if (!res.ok) {
+      throw new Error("Failed to get current login user");
+    }
+    return await res.json();
+  };
+
+  const onEdit = async (values: UserFieldType) => {
+    if (!user?.data[0]?.id) {
+      toast.error("Invalid user");
+      return;
+    }
+
+    const res = await fetch(
+      `http://localhost:3000/api/v1/users?userId=${user?.data[0]?.id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          username: values.username,
+          email: values.email,
+          phone: `${values.prefix}-${values.phone}`,
+        }),
+      }
+    );
+    if (!res.ok) {
+      throw new Error("Failed to update user");
+    }
+    return await res.json();
+  };
+
+  const { mutate: onEditMutate, isPending: onEditPending } = useMutation({
+    mutationFn: onEdit,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users", "me"] });
+      toast.success("User data successfully updated");
+      setOpen(false);
+    },
+    onError: () => {
+      toast.error("Failed to updated the user");
+    },
+  });
+
+  const { data: user } = useQuery({
+    queryKey: ["users", "me"],
+    queryFn: getCurrentUserFn,
+  });
+
   const { mutate: onLogout, isPending: logoutPending } = useMutation({
     mutationFn: logoutFn,
     onSuccess: () => {
       toast.success("User successfully logout");
       // Clear local storage
       localStorage.removeItem("ums-user");
-
       // Navigate to sign in screen
       router.push("/sign-in");
     },
@@ -37,8 +106,31 @@ export default function MainPage() {
     },
   });
 
+  const prefixSelector = (
+    <Form.Item<UserFieldType> name="prefix" noStyle>
+      <Select
+        defaultValue={user?.data[0]?.phone.split("-")[0]}
+        disabled={onEditPending}
+        style={{ width: 70 }}
+      >
+        <Option value="+95" key={"+95"}>
+          +95
+        </Option>
+        <Option value="+75" key={"+75"}>
+          +75
+        </Option>
+        <Option value="+86" key={"+86"}>
+          +86
+        </Option>
+        <Option value="+87" key={"+87"}>
+          +87
+        </Option>
+      </Select>
+    </Form.Item>
+  );
+
   return (
-    <div className="w-full pt-16 md:pt-28 lg:pt-32">
+    <div className="w-full pt-16 ">
       <h1 className="text-xl text-center md:text-2xl lg:text-3xl font-bold mb-3">
         Welcome Back, 👋
       </h1>
@@ -59,24 +151,28 @@ export default function MainPage() {
                   A
                 </Avatar>
               }
-              title={<h2 className="text-xl md:text-2xl">Arkar Min</h2>}
+              title={
+                <h2 className="text-xl md:text-2xl">
+                  {user?.data[0].username}
+                </h2>
+              }
               description={
                 <div>
                   <p className="text-base text-neutral-800">
-                    Email: arkar@gmail.com
+                    Email: {user?.data[0].email}
                   </p>
                   <p className="text-base text-neutral-800">
-                    Phone: +95-879879879
+                    Phone: {user?.data[0].phone}
                   </p>
                   <p className="text-base text-neutral-800">
-                    Created At: 12/2/2024
+                    Created At: {user?.data[0].createdAt}
                   </p>
                   <p className="text-base text-neutral-800">
-                    Updated At: 12/2/2024
+                    Updated At: {user?.data[0].updatedAt}
                   </p>
                   <div className="flex items-center gap-4 mt-4">
-                    <Button type="primary" onClick={() => onLogout()}>
-                      {logoutPending ? (
+                    <Button type="primary" onClick={() => setOpen(true)}>
+                      {onEditPending ? (
                         <LoadingOutlined className="text-lg " />
                       ) : (
                         "Edit"
@@ -98,13 +194,108 @@ export default function MainPage() {
           <LoadingOutlined className="text-lg text-center" />
         )}
       </div>
-
-      <h2 className="text-center text-lg md:text-xl mb-5 mt-8">Manage users</h2>
-      {isMounted ? (
-        <DataTable />
-      ) : (
-        <LoadingOutlined className="text-xl text-center" />
+      {user?.data[0].role === "ADMIN" && (
+        <>
+          <h2 className="text-center text-lg md:text-xl mb-5 mt-8">
+            Manage users
+          </h2>
+          {isMounted ? (
+            <DataTable />
+          ) : (
+            <LoadingOutlined className="text-xl text-center" />
+          )}
+        </>
       )}
+      <Modal open={open} title="Update" footer={null} closeIcon={false}>
+        <Form
+          name="basic"
+          layout="vertical"
+          initialValues={{
+            username: user?.data[0]?.username,
+            email: user?.data[0]?.email,
+            prefix: user?.data[0]?.phone.split("-")[0],
+            role: user?.data[0].role,
+            phone: user?.data[0]?.phone.split("-")[1],
+          }}
+          onFinish={onEditMutate}
+          autoComplete="off"
+          className="mt-4"
+          style={{ padding: "0 2rem" }}
+        >
+          <Form.Item<UserFieldType>
+            label="Username"
+            name="username"
+            rules={[{ required: true, message: "Please input your username!" }]}
+          >
+            <Input
+              disabled={onEditPending}
+              defaultValue={user?.data[0]?.username}
+            />
+          </Form.Item>
+          <Form.Item<UserFieldType>
+            label="Email"
+            name="email"
+            rules={[
+              { required: true, message: "Please input your email!" },
+              { type: "email", message: "The input is not valid E-mail!" },
+            ]}
+          >
+            <Input
+              disabled={onEditPending}
+              defaultValue={user?.data[0]?.email}
+            />
+          </Form.Item>
+          <Form.Item<UserFieldType>
+            label="Phone Number"
+            name="phone"
+            rules={[
+              {
+                required: true,
+                message: "Please input your phone number!",
+              },
+            ]}
+          >
+            <Input
+              disabled={onEditPending}
+              addonBefore={prefixSelector}
+              style={{ width: "100%" }}
+              defaultValue={user?.data[0]?.phone.split("-")[1]}
+            />
+          </Form.Item>
+          {user?.data[0]?.role === "ADMIN" && (
+            <Form.Item<UserFieldType>
+              label="Role"
+              name="role"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input the role!",
+                },
+              ]}
+            >
+              <Select
+                disabled={onEditPending}
+                defaultValue={user?.data[0]?.role}
+                style={{ width: "100%" }}
+                options={[
+                  { value: "USER", label: "User" },
+                  { value: "ADMIN", label: "Admin" },
+                ]}
+              />
+            </Form.Item>
+          )}
+          <div className="my-3 mb-5 flex justify-between items-center">
+            <Button disabled={onEditPending} type="primary" htmlType="submit">
+              {onEditPending ? (
+                <LoadingOutlined className="text-lg " />
+              ) : (
+                "Save"
+              )}
+            </Button>
+            <Button onClick={() => setOpen(false)}>Cancel</Button>
+          </div>
+        </Form>
+      </Modal>
     </div>
   );
 }

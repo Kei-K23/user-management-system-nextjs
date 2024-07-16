@@ -1,6 +1,7 @@
+import { selectUserById } from "@/services/user";
 import { jwtVerify } from "jose";
 import { cookies } from "next/headers";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
     const cookieStore = cookies()
@@ -23,8 +24,11 @@ export async function GET(request: NextRequest) {
         return Response.json({ error: 'Expired JWT token' }, { status: 401 });
     }
 
-    // Delete the cookie and logout
-    cookies().delete('ums-jwt-token');
+    const users = await selectUserById(+payload?.userId! as number);
 
-    return Response.json({ message: "Successfully logout" }, { status: 200 });
+    if (!users.length) {
+        return Response.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    return Response.json({ data: users }, { status: 201 });
 }

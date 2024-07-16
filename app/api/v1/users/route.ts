@@ -1,11 +1,14 @@
+import { db } from "@/db/drizzle";
+import { users } from "@/db/schema";
 import { generateRandomNumber } from "@/lib/utils";
 import { sendEmail } from "@/services/mail/mail-backend";
 import VerificationTokenEmail from "@/services/mail/verification-email";
-import { insertUser, selectAllUserWithoutCurrentUser } from "@/services/user";
+import { insertUser, selectAllUserWithoutCurrentUser, selectUserById } from "@/services/user";
 import { insertVerificationToken } from "@/services/verification-token";
 import { EmailCategory } from "@/types";
 import { render } from "@react-email/components";
 import * as argon2 from "argon2";
+import { eq } from "drizzle-orm";
 import { NextRequest } from "next/server";
 
 export async function POST(request: Request) {
@@ -75,4 +78,38 @@ export async function DELETE(request: NextRequest) {
 
     const users = await selectAllUserWithoutCurrentUser(+userId);
     return Response.json({ data: users }, { status: 201 });
+}
+
+
+export async function PUT(request: NextRequest) {
+    const jsonData = await request.json();
+    const searchParams = request.nextUrl.searchParams
+    const userId = searchParams.get('userId');
+    const username = jsonData.username;
+    const email = jsonData.email;
+    const phone = jsonData.phone;
+    const role = jsonData.role;
+
+    if (!userId) {
+        return Response.json({ error: "Missing user id" }, { status: 401 });
+    }
+
+    if (!username || !email || !phone) {
+        return Response.json({ error: "Invalid request data" }, { status: 400 });
+    }
+
+    const existingUser = await selectUserById(+userId);
+
+    if (!existingUser.length) {
+        return Response.json({ error: "User not found to update" }, { status: 404 });
+    }
+
+    const updatedUser = await db.update(users).set({
+        email,
+        phone,
+        username,
+        role: role || existingUser[0].role
+    }).where(eq(users.id, +userId));
+
+    return Response.json({ data: updatedUser }, { status: 200 });
 }

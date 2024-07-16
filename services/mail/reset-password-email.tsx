@@ -25,7 +25,7 @@ export default function ResetPasswordEmail({
         <Container style={container}>
           <Section style={coverSection}>
             <Section style={upperSection}>
-              <Heading style={h1}>Rest Your Password</Heading>
+              <Heading style={h1}>Reset Your Password</Heading>
               <Text style={mainText}>
                 Someone recently requested a password change for your UMS
                 account. If this was you, you can set a new password here:
