@@ -19,6 +19,7 @@ export async function POST(request: Request) {
     await insertVerificationToken({
         userId: user[0].id,
         token: verificationToken,
+        category: EmailCategory.PASSWORD_RESET
     });
 
     // Render email template

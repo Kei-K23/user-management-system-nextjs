@@ -18,6 +18,7 @@ export const verificationTokens = pgTable("verification_tokens", {
     id: serial('id').primaryKey(),
     userId: serial("user_id").notNull().references(() => users.id, { onDelete: 'set null' }),  // Foreign key reference
     token: integer("token").notNull().unique(),
+    category: text("category").notNull(),
     createdAt: timestamp('created_at').defaultNow(),
     expiredAt: timestamp('expired_at').default(sql`now() + interval '10 minutes'`),
     validatedAt: timestamp('validated_at')

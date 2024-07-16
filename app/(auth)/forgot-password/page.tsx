@@ -33,7 +33,7 @@ export default function ForgotPasswordPage() {
         Forgot Password!
       </h1>
       <p className="text-lg">
-        Enter your email and we will send you a link to reset your password
+        Enter your email and we will send you a email to reset your password
       </p>
       {isMounted ? (
         <Row
