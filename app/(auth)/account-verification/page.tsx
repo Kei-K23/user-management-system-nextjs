@@ -17,7 +17,7 @@ export default function AccountVerification() {
     }
 
     const res = await fetch(
-      "http://localhost:3000/api/v1/verification/verify",
+      "http://localhost:3000/api/v1/auth/verification/verify",
       {
         method: "POST",
         headers: {
@@ -43,7 +43,7 @@ export default function AccountVerification() {
     }
 
     const res = await fetch(
-      "http://localhost:3000/api/v1/verification/resend",
+      "http://localhost:3000/api/v1/auth/verification/resend",
       {
         method: "POST",
         headers: {
