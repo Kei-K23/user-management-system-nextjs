@@ -66,8 +66,14 @@ export async function GET(request: NextRequest) {
         return Response.json({ error: "Missing user id" }, { status: 401 });
     }
 
+    const existingUser = await selectUserById(+userId);
+
+    if (!existingUser.length) {
+        return Response.json({ error: "User not found to update" }, { status: 404 });
+    }
+
     const users = await selectAllUserWithoutCurrentUser(+userId);
-    return Response.json({ data: users }, { status: 201 });
+    return Response.json({ data: users }, { status: 200 });
 }
 
 export async function DELETE(request: NextRequest) {

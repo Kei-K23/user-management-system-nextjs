@@ -61,6 +61,23 @@ export default function MainPage() {
     return await res.json();
   };
 
+  const getAllUsersFn = async () => {
+    const res = await fetch(
+      `http://localhost:3000/api/v1/users?userId=${user?.data[0]?.id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
+    if (!res.ok) {
+      throw new Error("Failed to get users");
+    }
+    return await res.json();
+  };
+
   const onEdit = async (values: UserFieldType) => {
     if (!user?.data[0]?.id) {
       toast.error("Invalid user");
@@ -92,6 +109,7 @@ export default function MainPage() {
     mutationFn: onEdit,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users", "me"] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
       toast.success("User data successfully updated");
       setOpen(false);
     },
@@ -103,6 +121,12 @@ export default function MainPage() {
   const { data: user } = useQuery({
     queryKey: ["users", "me"],
     queryFn: getCurrentUserFn,
+    refetchOnMount: "always",
+  });
+
+  const { data: users, isPending: usersPending } = useQuery({
+    queryKey: ["users"],
+    queryFn: getAllUsersFn,
     refetchOnMount: "always",
   });
 
@@ -237,7 +261,11 @@ export default function MainPage() {
             Manage users
           </h2>
           {isMounted ? (
-            <DataTable />
+            usersPending ? (
+              <LoadingOutlined className="text-xl text-center" />
+            ) : (
+              <DataTable dataSource={users.data} />
+            )
           ) : (
             <LoadingOutlined className="text-xl text-center" />
           )}
