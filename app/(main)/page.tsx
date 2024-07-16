@@ -195,7 +195,7 @@ export default function MainPage() {
               avatar={
                 <Avatar
                   size={{
-                    sm: 30,
+                    sm: 50,
                     md: 50,
                     lg: 70,
                     xl: 70,
@@ -226,10 +226,16 @@ export default function MainPage() {
                     Phone: {user?.data[0].phone}
                   </p>
                   <p className="text-base text-neutral-800">
-                    Created At: {user?.data[0].createdAt}
+                    Created At:{" "}
+                    {new Date(user?.data[0].createdAt).toLocaleDateString(
+                      "en-CA"
+                    )}
                   </p>
                   <p className="text-base text-neutral-800">
-                    Updated At: {user?.data[0].updatedAt}
+                    Updated At:{" "}
+                    {new Date(user?.data[0].updatedAt).toLocaleDateString(
+                      "en-CA"
+                    )}
                   </p>
                   <div className="flex items-center gap-4 mt-4">
                     <Button type="primary" onClick={() => setOpen(true)}>

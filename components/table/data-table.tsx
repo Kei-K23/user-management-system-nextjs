@@ -98,6 +98,7 @@ export default function DataTable({ dataSource }: DataTableProps) {
           username: values.username,
           email: values.email,
           phone: `${values.prefix}-${values.phone}`,
+          role: values.role,
         }),
       }
     );
@@ -206,7 +207,7 @@ export default function DataTable({ dataSource }: DataTableProps) {
       title: "Created At",
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (date: Date) => date.toLocaleString(),
+      render: (date: Date) => date.toLocaleString("en-CA"),
       sorter: (a, b) =>
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
     },
@@ -214,7 +215,7 @@ export default function DataTable({ dataSource }: DataTableProps) {
       title: "Updated At",
       dataIndex: "updatedAt",
       key: "updatedAt",
-      render: (date: Date) => date.toLocaleString(),
+      render: (date: Date) => date.toLocaleString("en-CA"),
       sorter: (a, b) =>
         new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
     },
@@ -273,6 +274,7 @@ export default function DataTable({ dataSource }: DataTableProps) {
         columns={columns}
         dataSource={dataSource}
       />
+      <div className="h-[50px]" />
       <Modal
         open={open}
         title={<h2 className="text-center mb-2">Manage User</h2>}

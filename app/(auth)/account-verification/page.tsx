@@ -2,6 +2,7 @@
 
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "antd";
+import { Metadata } from "next";
 import { useRouter } from "next/navigation";
 import React from "react";
 import toast from "react-hot-toast";
