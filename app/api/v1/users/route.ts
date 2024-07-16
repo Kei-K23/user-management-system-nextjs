@@ -142,6 +142,7 @@ export async function PUT(request: NextRequest) {
 
     const existingUser = await selectUserById(+userId);
 
+
     if (!existingUser.length) {
         return Response.json({ error: "User not found to update" }, { status: 404 });
     }

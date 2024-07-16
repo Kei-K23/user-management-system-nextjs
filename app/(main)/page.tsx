@@ -118,18 +118,6 @@ export default function MainPage() {
     },
   });
 
-  const { data: user } = useQuery({
-    queryKey: ["users", "me"],
-    queryFn: getCurrentUserFn,
-    refetchOnMount: "always",
-  });
-
-  const { data: users, isPending: usersPending } = useQuery({
-    queryKey: ["users"],
-    queryFn: getAllUsersFn,
-    refetchOnMount: "always",
-  });
-
   const { mutate: onLogout, isPending: logoutPending } = useMutation({
     mutationFn: logoutFn,
     onSuccess: () => {
@@ -148,7 +136,7 @@ export default function MainPage() {
     mutationFn: deleteFn,
     onSuccess: (value) => {
       toast.success("User account successfully deleted");
-      if (value.ownAccount === 1) {
+      if (value.ownAccount == 1) {
         // Clear local storage
         localStorage.removeItem("ums-user");
         // Navigate to sign in screen
@@ -158,6 +146,18 @@ export default function MainPage() {
     onError: () => {
       toast.error("Failed to delete the user account");
     },
+  });
+
+  const { data: user } = useQuery({
+    queryKey: ["users", "me"],
+    queryFn: getCurrentUserFn,
+    refetchOnMount: "always",
+  });
+
+  const { data: users, isPending: usersPending } = useQuery({
+    queryKey: ["users"],
+    queryFn: getAllUsersFn,
+    refetchOnMount: "always",
   });
 
   const prefixSelector = (
@@ -262,12 +262,16 @@ export default function MainPage() {
           </h2>
           {isMounted ? (
             usersPending ? (
-              <LoadingOutlined className="text-xl text-center" />
+              <div className="flex items-center justify-center">
+                <LoadingOutlined className="text-2xl text-center" />
+              </div>
             ) : (
               <DataTable dataSource={users.data} />
             )
           ) : (
-            <LoadingOutlined className="text-xl text-center" />
+            <div className="flex items-center justify-center">
+              <LoadingOutlined className="text-2xl text-center" />
+            </div>
           )}
         </>
       )}
