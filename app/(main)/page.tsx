@@ -12,7 +12,6 @@ import toast from 'react-hot-toast'
 export default function MainPage() {
     const isMounted = useMounted();
     const router = useRouter();
-    const [open, setOpen] = useState(false);
 
     const logoutFn = async () => {
         const res = await fetch("http://localhost:3000/api/v1/auth/sign-out", {
@@ -33,8 +32,6 @@ export default function MainPage() {
             toast.error("Failed to logout the user");
         },
     });
-
-
 
     return (
         <div className='w-full h-full'>

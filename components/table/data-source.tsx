@@ -21,7 +21,7 @@ const dataSource: UserData[] = Array.from({ length: 30 }, (_, i) => ({
     id: i + 1,
     username: `user${i + 1}`,
     email: `user${i + 1}@example.com`,
-    phone: `123-456-789${i}`,
+    phone: `+95-123-456-789${i}`,
     role: i % 2 === 0 ? "USER" : "ADMIN",
     isActivated: i % 2 === 0,
     createdAt: new Date(),

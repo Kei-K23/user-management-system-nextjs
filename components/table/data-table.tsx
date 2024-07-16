@@ -1,8 +1,12 @@
-import { Button, Modal, Table, TableColumnsType, TableProps } from 'antd'
+import { LoadingOutlined } from '@ant-design/icons';
+import { useMutation } from '@tanstack/react-query';
+import { Button, Form, Input, Modal, Select, Table, TableColumnsType, TableProps } from 'antd'
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react'
+import toast from 'react-hot-toast';
 
 // User data structure
-interface UserData {
+type UserData = {
     key: string;
     id: number;
     username: string;
@@ -14,7 +18,17 @@ interface UserData {
     updatedAt: Date;
 }
 
+type FieldType = {
+    username: string;
+    email: string;
+    phone: string;
+    prefix: string;
+    role: string;
+};
+
 export default function DataTable() {
+    const { Option } = Select;
+    const router = useRouter();
     const [open, setOpen] = useState(false);
     const [selectedData, setSelectedData] = useState<UserData | null>(null);
 
@@ -31,6 +45,38 @@ export default function DataTable() {
         setSelectedData(null);
         setOpen(false);
     }
+
+
+    const onEdit = async (values: FieldType) => {
+
+        const res = await fetch("http://localhost:3000/api/v1/auth/sign-up", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+            },
+            body: JSON.stringify({
+                username: values.username,
+                email: values.email,
+                phone: values.prefix + values.phone,
+            }),
+        });
+        if (!res.ok) {
+            throw new Error("Failed to create user");
+        }
+        return await res.json();
+    };
+
+    const { mutate: onEditMutate, isPending: onEditPending } = useMutation({
+        mutationFn: onEdit,
+        onSuccess: (value) => {
+            toast.success("User data successfully updated");
+        },
+        onError: () => {
+            toast.error("Failed to updated the user");
+        },
+    });
+
 
     // Generate 30 user data entries
     const dataSource: UserData[] = Array.from({ length: 30 }, (_, i) => ({
@@ -163,26 +209,111 @@ export default function DataTable() {
         }
     ];
 
+    const prefixSelector = (
+        <Form.Item<FieldType> name="prefix" noStyle>
+            <Select disabled={onEditPending} style={{ width: 70 }}>
+                <Option value="+95" key={"+95"}>
+                    +95
+                </Option>
+                <Option value="+75" key={"+75"}>
+                    +75
+                </Option>
+                <Option value="+86" key={"+86"}>
+                    +86
+                </Option>
+                <Option value="+87" key={"+87"}>
+                    +87
+                </Option>
+            </Select>
+        </Form.Item>
+    );
+
     return (
         <div className='mx-auto w-[80%]'>
             <Table className='border rounded-lg' columns={columns} dataSource={dataSource} onChange={onChange} />
-
             <Modal
                 open={open}
                 title="Mange the user"
-                onCancel={handleCancel}
-                footer={(_, { CancelBtn }) => (
-                    <>
-                        <CancelBtn />
-                        <Button>
-                            Save
-                        </Button>
-                    </>
-                )}
+                footer={null}
+                closeIcon={false}
             >
-                <p>{selectedData?.username}</p>
-                <p>{selectedData?.email}</p>
-                <p>{selectedData?.phone}</p>
+                <Form
+                    name="basic"
+                    layout="vertical"
+                    initialValues={{ remember: true }}
+                    onFinish={onEditMutate}
+                    autoComplete="off"
+                    className="mt-4"
+                    style={{ padding: "0 2rem" }}
+                >
+                    <Form.Item<FieldType>
+                        label="Username"
+                        name="username"
+                        rules={[
+                            { required: true, message: "Please input your username!" },
+                        ]}
+                    >
+                        <Input disabled={onEditPending} defaultValue={selectedData?.username} />
+                    </Form.Item>
+                    <Form.Item<FieldType>
+                        label="Email"
+                        name="email"
+                        rules={[
+                            { required: true, message: "Please input your email!" },
+                            { type: "email", message: "The input is not valid E-mail!" },
+                        ]}
+                    >
+                        <Input disabled={onEditPending} defaultValue={selectedData?.email} />
+                    </Form.Item>
+                    <Form.Item<FieldType>
+                        label="Phone Number"
+                        name="phone"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please input your phone number!",
+                            },
+                        ]}
+                    >
+                        <Input
+                            disabled={onEditPending}
+                            addonBefore={prefixSelector}
+                            style={{ width: "100%" }}
+                            defaultValue={selectedData?.phone.split("-")[1]}
+                        />
+                    </Form.Item>
+                    <Form.Item<FieldType>
+                        label="Role"
+                        name="role"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please input the role!",
+                            },
+                        ]}
+                    >
+                        <Select
+                            defaultValue={selectedData?.role}
+                            style={{ width: "100%" }}
+                            options={[
+                                { value: 'USER', label: 'User' },
+                                { value: 'ADMIN', label: 'Admin' },
+                            ]}
+                        />
+                    </Form.Item>
+                    <div className="my-3 mb-5 flex justify-between items-center">
+                        <Button disabled={onEditPending} type="primary" htmlType="submit">
+                            {onEditPending ? (
+                                <LoadingOutlined className="text-lg " />
+                            ) : (
+                                "Save"
+                            )}
+                        </Button>
+                        <Button onClick={handleCancel}>
+                            Cancel
+                        </Button>
+                    </div>
+                </Form>
             </Modal>
         </div>
     )
