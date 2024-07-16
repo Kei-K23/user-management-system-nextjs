@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     }
 
     if (!user[0].isActivated) {
-        return Response.json({ error: 'Account is not activated yet' }, { status: 401 });
+        return Response.json({ error: 'User account is not activated yet' }, { status: 401 });
     }
 
     const validPassword = await argon2.verify(user[0].password, password);

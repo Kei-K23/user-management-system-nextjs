@@ -17,13 +17,18 @@ export default function ForgotPasswordPage() {
   const router = useRouter();
 
   const onFinish = async (values: FieldType) => {
-    const userId = localStorage.getItem("ums-user-id");
-    if (!userId) {
-      throw new Error("User id is missing");
+    const userStoreData = localStorage.getItem("ums-user");
+    if (!userStoreData) {
+      throw new Error("Invalid user");
+    }
+
+    const user = JSON.parse(userStoreData);
+    if (!user.id) {
+      throw new Error("User id is missing to resend the verification code");
     }
 
     if (!values.email) {
-      return;
+      throw new Error("Email is missing");
     }
 
     const res = await fetch("http://localhost:3000/api/v1/auth/reset-password/send-email", {
@@ -34,7 +39,7 @@ export default function ForgotPasswordPage() {
       },
       body: JSON.stringify({
         email: values.email,
-        userId
+        userId: user.id
       }),
     });
     if (!res.ok) {

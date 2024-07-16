@@ -9,16 +9,15 @@ export async function POST(request: Request) {
     const code = jsonData.code;
     const userId = jsonData.userId;
 
-    // Check validation for form data
-    if (!code) {
+    // Check validation
+    if (!code || !userId) {
         return Response.json({ error: 'Invalid request data' }, { status: 400 });
     }
 
-    // Insert user to your database here
     const token = await selectVerificationTokenByToken(code, userId, EmailCategory.EMAIL_VERIFICATION);
 
     if (!token.length) {
-        return Response.json({ error: 'Invalid verification code or expired verification code' }, { status: 401 });
+        return Response.json({ error: 'Verification code is invalid or expired' }, { status: 401 });
     }
 
     // TODO: handle user existing

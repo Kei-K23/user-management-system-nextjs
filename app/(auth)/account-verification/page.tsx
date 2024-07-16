@@ -11,8 +11,14 @@ export default function AccountVerification() {
   const router = useRouter();
 
   const accountVerifyFn = async (code: string) => {
-    const userId = localStorage.getItem("ums-user-id");
-    if (!code || code.length !== 6 || !userId) {
+    const userStoreData = localStorage.getItem("ums-user");
+
+    if (!userStoreData) {
+      throw new Error("Invalid user");
+    }
+
+    const user = JSON.parse(userStoreData);
+    if (!code || code.length !== 6 || !user.id) {
       throw new Error("Invalid verification code");
     }
 
@@ -26,7 +32,7 @@ export default function AccountVerification() {
         },
         body: JSON.stringify({
           code: code.trim(),
-          userId,
+          userId: user.id,
         }),
       }
     );
@@ -37,8 +43,13 @@ export default function AccountVerification() {
   };
 
   const resendVerificationCodeFn = async () => {
-    const userId = localStorage.getItem("ums-user-id");
-    if (!userId) {
+    const userStoreData = localStorage.getItem("ums-user");
+    if (!userStoreData) {
+      throw new Error("Invalid user");
+    }
+
+    const user = JSON.parse(userStoreData);
+    if (!user.id) {
       throw new Error("User id is missing to resend the verification code");
     }
 
@@ -51,7 +62,7 @@ export default function AccountVerification() {
           Accept: "application/json",
         },
         body: JSON.stringify({
-          userId,
+          userId: user.id,
         }),
       }
     );

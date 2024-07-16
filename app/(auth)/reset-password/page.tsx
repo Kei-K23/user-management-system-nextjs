@@ -19,18 +19,31 @@ const ResetPasswordPage = () => {
   const router = useRouter();
 
   const onFinish = async (values: FieldType) => {
+
     if (values.password !== values.confirmPassword) {
       throw new Error("Passwords do not match");
     }
 
-    const res = await fetch("http://localhost:3000/api/v1/auth/", {
+    const userStoreData = localStorage.getItem("ums-user");
+    if (!userStoreData) {
+      throw new Error("Invalid user");
+    }
+
+    const user = JSON.parse(userStoreData);
+    if (!user.id) {
+      throw new Error("User id is missing to resend the verification code");
+    }
+
+    const res = await fetch("http://localhost:3000/api/v1/auth/reset-password", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
+      //! TODO: Need to add two fields code and userId
       body: JSON.stringify({
         password: values.password,
+        userId: user.id
       }),
     });
     if (!res.ok) {
@@ -41,7 +54,7 @@ const ResetPasswordPage = () => {
 
   const { mutate, isPending } = useMutation({
     mutationFn: onFinish,
-    onSuccess: (value) => {
+    onSuccess: () => {
       toast.success("User password successfully reset");
       // Navigate to account verification page
       router.push(`/sign-in`);

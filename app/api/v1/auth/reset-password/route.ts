@@ -3,22 +3,23 @@ import { users, verificationTokens } from "@/db/schema";
 import { selectUserById } from "@/services/user";
 import { selectVerificationTokenByToken } from "@/services/verification-token";
 import { eq } from "drizzle-orm";
+import * as argon2 from "argon2";
 
 export async function POST(request: Request) {
     const jsonData = await request.json();
     const code = jsonData.code;
     const userId = jsonData.userId;
+    const password = jsonData.password;
 
-    // Check validation for form data
-    if (!code) {
+    // Check validation
+    if (!code || !userId || !password) {
         return Response.json({ error: 'Invalid request data' }, { status: 400 });
     }
 
-    // Insert user to your database here
     const token = await selectVerificationTokenByToken(code, userId, EmailCategory.PASSWORD_RESET);
 
     if (!token.length) {
-        return Response.json({ error: 'Invalid verification code or expired verification code' }, { status: 401 });
+        return Response.json({ error: 'Verification code is invalid or expired' }, { status: 401 });
     }
 
     // TODO: handle user existing
@@ -28,15 +29,22 @@ export async function POST(request: Request) {
         return Response.json({ error: 'Invalid user' }, { status: 401 });
     }
 
+    if (!user[0].isActivated) {
+        return Response.json({ error: 'User account is not activated yet' }, { status: 401 });
+    }
+
     // Update the verification token
     await db.update(verificationTokens).set({
         validatedAt: new Date(new Date().getTime())
     }).where(eq(verificationTokens.id, token[0].id));
 
-    // Activate the user account in your database here
+    // Hash the password
+    const hashPassword = await argon2.hash(password);
+
+    // Update the user account
     await db.update(users).set({
-        isActivated: true
+        password: hashPassword
     }).where(eq(users.id, token[0].userId));
 
-    return Response.json({ message: "Successfully verify the user account" }, { status: 200 });
+    return Response.json({ message: "Successfully reset the user password" }, { status: 200 });
 }

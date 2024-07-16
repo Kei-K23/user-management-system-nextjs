@@ -51,8 +51,8 @@ const SignUpPage = () => {
     mutationFn: onFinish,
     onSuccess: (value) => {
       toast.success("User successfully registered");
-      // Store the user's id in local storage
-      localStorage.setItem("ums-user-id", value.data[0].id);
+      // Store the user data in local storage
+      localStorage.setItem("ums-user", JSON.stringify({ id: value.data[0].id, email: value.data[0].email }));
       // Navigate to account verification page
       router.push(`/account-verification`);
     },
