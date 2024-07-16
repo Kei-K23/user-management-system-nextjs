@@ -46,7 +46,6 @@ export default function DataTable() {
         setOpen(false);
     }
 
-
     const onEdit = async (values: FieldType) => {
 
         const res = await fetch("http://localhost:3000/api/v1/auth/sign-up", {
@@ -229,8 +228,8 @@ export default function DataTable() {
     );
 
     return (
-        <div className='mx-auto w-[80%]'>
-            <Table className='border rounded-lg' columns={columns} dataSource={dataSource} onChange={onChange} />
+        <div className='mx-auto w-[80%] mb-10'>
+            <Table className='border rounded-lg mb-10' columns={columns} dataSource={dataSource} onChange={onChange} />
             <Modal
                 open={open}
                 title="Mange the user"

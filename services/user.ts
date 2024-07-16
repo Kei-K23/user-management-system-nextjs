@@ -20,6 +20,11 @@ export const selectUserById = async (id: number) => {
         .where(sql`${users.id} = ${id}`);
 }
 
+export const selectAllUserWithoutCurrentUser = async (id: number) => {
+    return await db.select().from(users)
+        .where(sql`${users.id} != ${id}`);
+}
+
 export const selectUserByEmail = async (email: string) => {
     return await db.select().from(users)
         .where(sql`${users.email} = ${email}`);
