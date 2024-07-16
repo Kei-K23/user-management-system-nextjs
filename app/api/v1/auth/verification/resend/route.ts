@@ -3,6 +3,7 @@ import { sendEmail } from "@/services/mail/mail-backend";
 import VerificationTokenEmail from "@/services/mail/verification-email";
 import { selectUserById } from "@/services/user";
 import { insertVerificationToken } from "@/services/verification-token";
+import { EmailCategory } from "@/types";
 import { render } from "@react-email/components";
 
 export async function POST(request: Request) {

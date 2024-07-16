@@ -52,7 +52,10 @@ const SignUpPage = () => {
     onSuccess: (value) => {
       toast.success("User successfully registered");
       // Store the user data in local storage
-      localStorage.setItem("ums-user", JSON.stringify({ id: value.data[0].id, email: value.data[0].email }));
+      localStorage.setItem(
+        "ums-user",
+        JSON.stringify({ id: value.data[0].id, email: value.data[0].email })
+      );
       // Navigate to account verification page
       router.push(`/account-verification`);
     },
@@ -63,7 +66,7 @@ const SignUpPage = () => {
 
   const prefixSelector = (
     <Form.Item<FieldType> name="prefix" noStyle>
-      <Select style={{ width: 70 }}>
+      <Select disabled={isPending} style={{ width: 70 }}>
         <Option value="+95" key={"+95"}>
           +95
         </Option>

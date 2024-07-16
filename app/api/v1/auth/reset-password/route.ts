@@ -4,6 +4,7 @@ import { selectUserById } from "@/services/user";
 import { selectVerificationTokenByToken } from "@/services/verification-token";
 import { eq } from "drizzle-orm";
 import * as argon2 from "argon2";
+import { EmailCategory } from "@/types";
 
 export async function POST(request: Request) {
     const jsonData = await request.json();

@@ -2,6 +2,7 @@ import { db } from "@/db/drizzle";
 import { users, verificationTokens } from "@/db/schema";
 import { selectUserById } from "@/services/user";
 import { selectVerificationTokenByToken } from "@/services/verification-token";
+import { EmailCategory } from "@/types";
 import { eq } from "drizzle-orm";
 
 export async function POST(request: Request) {

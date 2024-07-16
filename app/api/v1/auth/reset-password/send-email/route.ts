@@ -1,8 +1,9 @@
 import { generateRandomNumber } from "@/lib/utils";
 import { sendEmail } from "@/services/mail/mail-backend";
-import VerificationTokenEmail from "@/services/mail/verification-email";
+import ResetPasswordEmail from "@/services/mail/reset-password-email";
 import { selectUserById } from "@/services/user";
 import { insertVerificationToken } from "@/services/verification-token";
+import { EmailCategory } from "@/types";
 import { render } from "@react-email/components";
 
 export async function POST(request: Request) {
@@ -32,7 +33,7 @@ export async function POST(request: Request) {
     });
 
     // Render email template
-    const emailHtml = render(VerificationTokenEmail({ verificationCode: verificationToken }));
+    const emailHtml = render(ResetPasswordEmail({ verificationCode: verificationToken }));
 
     // Send email
     sendEmail({

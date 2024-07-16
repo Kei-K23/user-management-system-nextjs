@@ -3,6 +3,7 @@ import { sendEmail } from "@/services/mail/mail-backend";
 import VerificationTokenEmail from "@/services/mail/verification-email";
 import { insertUser } from "@/services/user";
 import { insertVerificationToken } from "@/services/verification-token";
+import { EmailCategory } from "@/types";
 import { render } from "@react-email/components";
 import * as argon2 from "argon2";
 
