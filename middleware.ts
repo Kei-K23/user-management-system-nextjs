@@ -2,7 +2,7 @@ import { jwtVerify } from 'jose';
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-const PUBLIC_ROUTES = ['/sign-in', '/sign-up', '/forgot-password', '/account-verification', '/reset-password'];
+const PUBLIC_ROUTES = ['/sign-in', '/sign-up', '/forgot-password', '/account-verification', '/reset-password', "/"];
 
 export async function middleware(request: NextRequest) {
     // TODO: change with actual auth cookie name
