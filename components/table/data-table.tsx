@@ -56,13 +56,10 @@ export default function DataTable({ dataSource }: DataTableProps) {
     form.resetFields();
   };
 
-  const deleteFn = async () => {
-    const res = await fetch(
-      `http://localhost:3000/api/v1/users?userId=${selectedData?.id}`,
-      {
-        method: "DELETE",
-      }
-    );
+  const deleteFn = async (id: number) => {
+    const res = await fetch(`http://localhost:3000/api/v1/users?userId=${id}`, {
+      method: "DELETE",
+    });
     if (!res.ok) {
       throw new Error("Failed to delete user");
     }
@@ -79,6 +76,8 @@ export default function DataTable({ dataSource }: DataTableProps) {
         // Navigate to sign in screen
         router.push("/sign-in");
       }
+      queryClient.invalidateQueries({ queryKey: ["users", "me"] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
       setOpen(false);
     },
     onError: () => {
@@ -234,7 +233,7 @@ export default function DataTable({ dataSource }: DataTableProps) {
             <Button
               disabled={deletePending || onEditPending}
               danger
-              onClick={() => onDelete()}
+              onClick={() => onDelete(record.id)}
             >
               Delete
             </Button>
