@@ -8,21 +8,20 @@ import { eq } from "drizzle-orm";
 export async function POST(request: Request) {
     const jsonData = await request.json();
     const code = jsonData.code;
-    const userId = jsonData.userId;
 
     // Check validation
-    if (!code || !userId) {
+    if (!code) {
         return Response.json({ error: 'Invalid request data' }, { status: 400 });
     }
 
-    const token = await selectVerificationTokenByToken(code, userId, EmailCategory.EMAIL_VERIFICATION);
+    const token = await selectVerificationTokenByToken(code, EmailCategory.EMAIL_VERIFICATION);
 
     if (!token.length) {
         return Response.json({ error: 'Verification code is invalid or expired' }, { status: 401 });
     }
 
     // TODO: handle user existing
-    const user = await selectUserById(userId);
+    const user = await selectUserById(token[0].userId);
 
     if (!user.length) {
         return Response.json({ error: 'Invalid user' }, { status: 401 });

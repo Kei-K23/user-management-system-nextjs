@@ -18,16 +18,6 @@ export default function ForgotPasswordPage() {
   const [isPasswordResetSuccess, setIsPasswordResetSuccess] = useState(false);
 
   const onFinish = async (values: FieldType) => {
-    const userStoreData = localStorage.getItem("ums-user");
-    if (!userStoreData) {
-      throw new Error("Invalid user");
-    }
-
-    const user = JSON.parse(userStoreData);
-    if (!user.id) {
-      throw new Error("User id is missing to resend the verification code");
-    }
-
     if (!values.email) {
       throw new Error("Email is missing");
     }
@@ -42,7 +32,6 @@ export default function ForgotPasswordPage() {
         },
         body: JSON.stringify({
           email: values.email,
-          userId: user.id,
         }),
       }
     );
@@ -54,11 +43,13 @@ export default function ForgotPasswordPage() {
 
   const { mutate, isPending } = useMutation({
     mutationFn: onFinish,
-    onSuccess: (value) => {
+    onSuccess: () => {
       toast.success("Reset password email sent to user");
       setIsPasswordResetSuccess(true);
     },
-    onError: () => {
+    onError: (e) => {
+      console.log(e);
+
       toast.error("Failed to send reset password email to user");
     },
   });
@@ -127,14 +118,16 @@ export default function ForgotPasswordPage() {
         </>
       ) : (
         <>
-          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-3">
-            Successfully sent password reset email
-          </h1>
-          <p className="text-lg">
-            We successfully sent the reset password verification mail to your
-            email box. Please check the email and if it doesn&apos;t arrive, try
-            again.
-          </p>
+          <div className="border-2 border-neutral-100 rounded-lg w-[350px] sm:w-[500px] md:w-[600px] mt-5 p-4">
+            <h1 className="text-center text-xl md:text-2xl lg:text-3xl font-bold mb-3">
+              Successfully sent password reset email
+            </h1>
+            <p className="text-lg">
+              We successfully sent the reset password verification mail to your
+              email box. Please check the email and if it doesn&apos;t arrive,
+              try again.
+            </p>
+          </div>
         </>
       )}
     </div>

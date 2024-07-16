@@ -28,6 +28,5 @@ export async function GET(request: NextRequest) {
     // Delete the cookie and logout
     cookies().delete('ums-jwt-token');
 
-    // And redirect to the new URL
-    return NextResponse.redirect(loginUrl);
+    return Response.json({ message: "Successfully logout" }, { status: 200 });
 }

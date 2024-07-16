@@ -7,9 +7,8 @@ import {
   Preview,
   Section,
   Text,
+  Button,
 } from "@react-email/components";
-import { Button } from "antd";
-import * as React from "react";
 
 interface ResetPasswordEmailProps {
   verificationCode: number;
@@ -85,21 +84,6 @@ const text = {
 const coverSection = { backgroundColor: "#fff" };
 
 const upperSection = { padding: "25px 35px" };
-
-const verifyText = {
-  ...text,
-  margin: 0,
-  fontWeight: "bold",
-  textAlign: "center" as const,
-};
-
-const codeText = {
-  ...text,
-  fontWeight: "bold",
-  fontSize: "36px",
-  margin: "10px 0",
-  textAlign: "center" as const,
-};
 
 const validityText = {
   ...text,

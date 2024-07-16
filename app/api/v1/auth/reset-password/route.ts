@@ -9,22 +9,21 @@ import { EmailCategory } from "@/types";
 export async function POST(request: Request) {
     const jsonData = await request.json();
     const code = jsonData.code;
-    const userId = jsonData.userId;
     const password = jsonData.password;
 
     // Check validation
-    if (!code || !userId || !password) {
+    if (!code || !password) {
         return Response.json({ error: 'Invalid request data' }, { status: 400 });
     }
 
-    const token = await selectVerificationTokenByToken(code, userId, EmailCategory.PASSWORD_RESET);
+    const token = await selectVerificationTokenByToken(code, EmailCategory.PASSWORD_RESET);
 
     if (!token.length) {
         return Response.json({ error: 'Verification code is invalid or expired' }, { status: 401 });
     }
 
     // TODO: handle user existing
-    const user = await selectUserById(userId);
+    const user = await selectUserById(token[0].userId);
 
     if (!user.length) {
         return Response.json({ error: 'Invalid user' }, { status: 401 });

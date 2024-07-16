@@ -2,14 +2,15 @@ import { jwtVerify } from 'jose';
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-const PUBLIC_ROUTES = ['/sign-in', '/sign-up', '/forgot-password', '/account-verification', '/reset-password', "/"];
+const PUBLIC_ROUTES = ['/sign-in', '/sign-up', '/forgot-password', '/account-verification', '/reset-password'];
 
 export async function middleware(request: NextRequest) {
     // TODO: change with actual auth cookie name
     let cookie = request.cookies.get('ums-jwt-token');
     const signInUrl = new URL('/sign-in', request.url)
     const pathname = request.nextUrl.pathname;
-    const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
+    // Check if the pathname matches any of the public routes or reset-password with a dynamic segment
+    const isPublicRoute = PUBLIC_ROUTES.some(route => pathname === route || pathname.startsWith('/reset-password/'));
 
     // If the pathname is public then pass the authentication
     if (isPublicRoute) {
