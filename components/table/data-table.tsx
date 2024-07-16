@@ -10,7 +10,7 @@ export default function DataTable() {
 
     return (
         <div className='mx-auto w-[80%]'>
-            <Table columns={columns} dataSource={dataSource} onChange={onChange} />
+            <Table className='border rounded-lg' columns={columns} dataSource={dataSource} onChange={onChange} />
         </div>
     )
 }

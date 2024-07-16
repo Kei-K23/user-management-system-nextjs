@@ -26,6 +26,31 @@ const dataSource: UserData[] = Array.from({ length: 30 }, (_, i) => ({
     updatedAt: new Date(),
 }));
 
+// Add a new user with createdAt 10 minutes from now
+const tenMinutesFromNow = new Date();
+tenMinutesFromNow.setMinutes(tenMinutesFromNow.getMinutes() + 10);
+
+dataSource.push({
+    key: "1111111",
+    id: 1111,
+    username: "arkarmin",
+    email: "armian@gmail",
+    phone: "0808098",
+    role: "USER",
+    isActivated: true,
+    createdAt: tenMinutesFromNow,
+    updatedAt: tenMinutesFromNow,
+})
+
+// Create unique filter options for usernames
+const usernameFilters = Array.from(
+    dataSource.reduce((acc, user) => acc.add(user.username), new Set<string>())
+).map(username => ({
+    text: username,
+    value: username,
+}));
+
+
 // Columns definition for the users table
 const columns: TableColumnsType<UserData> = [
     {
@@ -37,10 +62,10 @@ const columns: TableColumnsType<UserData> = [
         title: 'Username',
         dataIndex: 'username',
         key: 'username',
-        filterMode: 'tree',
+        filters: usernameFilters,
+        filterMode: 'menu',
         filterSearch: true,
-        onFilter: (value, record) => record.username.startsWith(value as string),
-        width: "40%"
+        onFilter: (value, record) => record.username.startsWith(value as string)
     },
     {
         title: 'Email',
@@ -56,24 +81,52 @@ const columns: TableColumnsType<UserData> = [
         title: 'Role',
         dataIndex: 'role',
         key: 'role',
+        filters: [
+            {
+                text: 'USER',
+                value: 'USER',
+            },
+            {
+                text: 'ADMIN',
+                value: 'ADMIN',
+            },
+        ],
+        filterMode: 'menu',
+        filterSearch: true,
+        onFilter: (value, record) => record.role === value
     },
     {
         title: 'Activated',
         dataIndex: 'isActivated',
         key: 'isActivated',
         render: (isActivated: boolean) => (isActivated ? "Yes" : "No"),
+        filters: [
+            {
+                text: 'Activate',
+                value: true,
+            },
+            {
+                text: 'Not activate',
+                value: false,
+            },
+        ],
+        filterMode: 'menu',
+        filterSearch: true,
+        onFilter: (value, record) => record.isActivated === value
     },
     {
         title: 'Created At',
         dataIndex: 'createdAt',
         key: 'createdAt',
         render: (date: Date) => date.toLocaleString(),
+        sorter: (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
     },
     {
         title: 'Updated At',
         dataIndex: 'updatedAt',
         key: 'updatedAt',
         render: (date: Date) => date.toLocaleString(),
+        sorter: (a, b) => a.updatedAt.getTime() - b.updatedAt.getTime(),
     },
 ];
 
