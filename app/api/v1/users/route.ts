@@ -9,6 +9,8 @@ import { EmailCategory } from "@/types";
 import { render } from "@react-email/components";
 import * as argon2 from "argon2";
 import { eq } from "drizzle-orm";
+import { jwtVerify } from "jose";
+import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 
 export async function POST(request: Request) {
@@ -71,13 +73,47 @@ export async function GET(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
     const userId = searchParams.get('userId');
+    const cookieStore = cookies()
+    const jwtToken = cookieStore.get('ums-jwt-token')
+
 
     if (!userId) {
         return Response.json({ error: "Missing user id" }, { status: 401 });
     }
 
-    const users = await selectAllUserWithoutCurrentUser(+userId);
-    return Response.json({ data: users }, { status: 201 });
+    const existingUser = await selectUserById(+userId);
+
+    if (!existingUser.length) {
+        return Response.json({ error: "User not found to update" }, { status: 404 });
+    }
+
+
+    if (!jwtToken) {
+        return Response.json({ error: 'Missing JWT token' }, { status: 401 });
+    }
+    // Verify the token
+    const { payload } = await jwtVerify(jwtToken.value, new TextEncoder().encode(process.env.JWT_SECRET_KEY!));
+
+    // Check payload for any reason it not exists
+    if (!payload) {
+        return Response.json({ error: 'Missing JWT payload' }, { status: 401 });
+    }
+
+    // Check if the token has expired
+    const currentTime = Math.floor(Date.now() / 1000);
+    if (payload.exp! < currentTime) {
+        return Response.json({ error: 'Expired JWT token' }, { status: 401 });
+    }
+
+    await db.delete(users).where(eq(users.id, +userId));
+
+    if (payload.userId == userId) {
+        // Delete the cookie and logout
+        cookies().delete('ums-jwt-token');
+        return Response.json({ message: "Successfully delete the user", ownAccount: 1 }, { status: 200 });
+    }
+
+    return Response.json({ message: "Successfully delete the user", ownAccount: 0 }, { status: 200 });
 }
 
 

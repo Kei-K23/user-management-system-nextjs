@@ -1,0 +1,21 @@
+id,username,email,phone,password,isActivated,role,createdAt,updatedAt
+1,johndoe,johndoe@example.com,123-456-7890,"$argon2id$v=19$m=65536,t=3,p=4$HgsfsVqep5K9oqRJH6vQzw$vbkMNDWiJFyBu4xPvUvW/JpqOrBWJYdgBR0ND4zwjnY",true,ADMIN,2023-01-01 12:00:00,2023-01-01 12:00:00
+2,janedoe,janedoe@example.com,234-567-8901,"$argon2id$v=19$m=65536,t=3,p=4$HgsfsVqep5K9oqRJH6vQzw$vbkMNDWiJFyBu4xPvUvW/JpqOrBWJYdgBR0ND4zwjnY",false,USER,2023-01-02 13:00:00,2023-01-02 13:00:00
+3,bobsmith,bobsmith@example.com,345-678-9012,"$argon2id$v=19$m=65536,t=3,p=4$HgsfsVqep5K9oqRJH6vQzw$vbkMNDWiJFyBu4xPvUvW/JpqOrBWJYdgBR0ND4zwjnY",true,USER,2023-01-03 14:00:00,2023-01-03 14:00:00
+4,alicesmith,alicesmith@example.com,456-789-0123,"$argon2id$v=19$m=65536,t=3,p=4$HgsfsVqep5K9oqRJH6vQzw$vbkMNDWiJFyBu4xPvUvW/JpqOrBWJYdgBR0ND4zwjnY",false,USER,2023-01-04 15:00:00,2023-01-04 15:00:00
+5,maryjohnson,maryjohnson@example.com,567-890-1234,"$argon2id$v=19$m=65536,t=3,p=4$HgsfsVqep5K9oqRJH6vQzw$vbkMNDWiJFyBu4xPvUvW/JpqOrBWJYdgBR0ND4zwjnY",true,USER,2023-01-05 16:00:00,2023-01-05 16:00:00
+6,jamesbrown,jamesbrown@example.com,678-901-2345,"$argon2id$v=19$m=65536,t=3,p=4$HgsfsVqep5K9oqRJH6vQzw$vbkMNDWiJFyBu4xPvUvW/JpqOrBWJYdgBR0ND4zwjnY",false,USER,2023-01-06 17:00:00,2023-01-06 17:00:00
+7,patriciataylor,patriciataylor@example.com,789-012-3456,"$argon2id$v=19$m=65536,t=3,p=4$HgsfsVqep5K9oqRJH6vQzw$vbkMNDWiJFyBu4xPvUvW/JpqOrBWJYdgBR0ND4zwjnY",true,USER,2023-01-07 18:00:00,2023-01-07 18:00:00
+8,robertlee,robertlee@example.com,890-123-4567,"$argon2id$v=19$m=65536,t=3,p=4$HgsfsVqep5K9oqRJH6vQzw$vbkMNDWiJFyBu4xPvUvW/JpqOrBWJYdgBR0ND4zwjnY",false,USER,2023-01-08 19:00:00,2023-01-08 19:00:00
+9,barbaraharris,barbaraharris@example.com,901-234-5678,"$argon2id$v=19$m=65536,t=3,p=4$HgsfsVqep5K9oqRJH6vQzw$vbkMNDWiJFyBu4xPvUvW/JpqOrBWJYdgBR0ND4zwjnY",true,USER,2023-01-09 20:00:00,2023-01-09 20:00:00
+10,michaelclark,michaelclark@example.com,012-345-6789,"$argon2id$v=19$m=65536,t=3,p=4$HgsfsVqep5K9oqRJH6vQzw$vbkMNDWiJFyBu4xPvUvW/JpqOrBWJYdgBR0ND4zwjnY",false,USER,2023-01-10 21:00:00,2023-01-10 21:00:00
+11,lisamartin,lisamartin@example.com,123-456-7891,"$argon2id$v=19$m=65536,t=3,p=4$HgsfsVqep5K9oqRJH6vQzw$vbkMNDWiJFyBu4xPvUvW/JpqOrBWJYdgBR0ND4zwjnY",true,USER,2023-01-11 22:00:00,2023-01-11 22:00:00
+12,williamthompson,williamthompson@example.com,234-567-8902,"$argon2id$v=19$m=65536,t=3,p=4$HgsfsVqep5K9oqRJH6vQzw$vbkMNDWiJFyBu4xPvUvW/JpqOrBWJYdgBR0ND4zwjnY",false,USER,2023-01-12 23:00:00,2023-01-12 23:00:00
+13,jenniferwhite,jenniferwhite@example.com,345-678-9013,"$argon2id$v=19$m=65536,t=3,p=4$HgsfsVqep5K9oqRJH6vQzw$vbkMNDWiJFyBu4xPvUvW/JpqOrBWJYdgBR0ND4zwjnY",true,USER,2023-01-13 10:00:00,2023-01-13 10:00:00
+14,davidgarcia,davidgarcia@example.com,456-789-0124,"$argon2id$v=19$m=65536,t=3,p=4$HgsfsVqep5K9oqRJH6vQzw$vbkMNDWiJFyBu4xPvUvW/JpqOrBWJYdgBR0ND4zwjnY",false,USER,2023-01-14 11:00:00,2023-01-14 11:00:00
+15,sarahmartinez,sarahmartinez@example.com,567-890-1235,"$argon2id$v=19$m=65536,t=3,p=4$HgsfsVqep5K9oqRJH6vQzw$vbkMNDWiJFyBu4xPvUvW/JpqOrBWJYdgBR0ND4zwjnY",true,USER,2023-01-15 12:00:00,2023-01-15 12:00:00
+16,josephdavis,josephdavis@example.com,678-901-2346,"$argon2id$v=19$m=65536,t=3,p=4$HgsfsVqep5K9oqRJH6vQzw$vbkMNDWiJFyBu4xPvUvW/JpqOrBWJYdgBR0ND4zwjnY",false,USER,2023-01-16 13:00:00,2023-01-16 13:00:00
+17,susanrodriguez,susanrodriguez@example.com,789-012-3457,"$argon2id$v=19$m=65536,t=3,p=4$HgsfsVqep5K9oqRJH6vQzw$vbkMNDWiJFyBu4xPvUvW/JpqOrBWJYdgBR0ND4zwjnY",true,USER,2023-01-17 14:00:00,2023-01-17 14:00:00
+18,charleswilson,charleswilson@example.com,890-123-4568,"$argon2id$v=19$m=65536,t=3,p=4$HgsfsVqep5K9oqRJH6vQzw$vbkMNDWiJFyBu4xPvUvW/JpqOrBWJYdgBR0ND4zwjnY",false,USER,2023-01-18 15:00:00,2023-01-18 15:00:00
+19,karenyoung,karenyoung@example.com,901-234-5679,"$argon2id$v=19$m=65536,t=3,p=4$HgsfsVqep5K9oqRJH6vQzw$vbkMNDWiJFyBu4xPvUvW/JpqOrBWJYdgBR0ND4zwjnY",true,USER,2023-01-19 16:00:00,2023-01-19 16:00:00
+20,stephenking,stephenking@example.com,012-345-6780,"$argon2id$v=19$m=65536,t=3,p=4$HgsfsVqep5K9oqRJH6vQzw$vbkMNDWiJFyBu4xPvUvW/JpqOrBWJYdgBR0ND4zwjnY",false,USER,2023-01-20 17:00:00,2023-01-20 17:00:00

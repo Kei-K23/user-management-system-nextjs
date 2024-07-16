@@ -38,7 +38,6 @@ export async function middleware(request: NextRequest) {
         }
 
         // Token is valid and not expired
-        console.log(payload);
         return NextResponse.next();
     } catch (error) {
         // If verification fails, redirect to sign-in

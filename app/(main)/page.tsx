@@ -2,7 +2,7 @@
 
 import DataTable from "@/components/table/data-table";
 import { useMounted } from "@/lib/custom-hook";
-import { LoadingOutlined } from "@ant-design/icons";
+import { DeleteOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Avatar, Button, Card, Form, Input, Modal, Select } from "antd";
 import { useRouter } from "next/navigation";
@@ -30,6 +30,19 @@ export default function MainPage() {
     });
     if (!res.ok) {
       throw new Error("Failed to logout user");
+    }
+    return await res.json();
+  };
+
+  const deleteFn = async () => {
+    const res = await fetch(
+      `http://localhost:3000/api/v1/users?userId=${user?.data[0]?.id}`,
+      {
+        method: "DELETE",
+      }
+    );
+    if (!res.ok) {
+      throw new Error("Failed to delete user");
     }
     return await res.json();
   };
@@ -90,6 +103,7 @@ export default function MainPage() {
   const { data: user } = useQuery({
     queryKey: ["users", "me"],
     queryFn: getCurrentUserFn,
+    refetchOnMount: "always",
   });
 
   const { mutate: onLogout, isPending: logoutPending } = useMutation({
@@ -103,6 +117,22 @@ export default function MainPage() {
     },
     onError: () => {
       toast.error("Failed to logout the user");
+    },
+  });
+
+  const { mutate: onDelete, isPending: deletePending } = useMutation({
+    mutationFn: deleteFn,
+    onSuccess: (value) => {
+      toast.success("User account successfully deleted");
+      if (value.ownAccount === 1) {
+        // Clear local storage
+        localStorage.removeItem("ums-user");
+        // Navigate to sign in screen
+        router.push("/sign-in");
+      }
+    },
+    onError: () => {
+      toast.error("Failed to delete the user account");
     },
   });
 
@@ -152,9 +182,16 @@ export default function MainPage() {
                 </Avatar>
               }
               title={
-                <h2 className="text-xl md:text-2xl">
-                  {user?.data[0].username}
-                </h2>
+                <div className="flex justify-between items-center">
+                  <h2 className="text-xl md:text-2xl">
+                    {user?.data[0].username}
+                  </h2>
+                  <DeleteOutlined
+                    disabled={deletePending}
+                    onClick={() => onDelete()}
+                    className="cursor-pointer text-xl text-red-500 hover:text-red-600"
+                  />
+                </div>
               }
               description={
                 <div>

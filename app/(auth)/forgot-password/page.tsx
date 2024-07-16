@@ -48,8 +48,6 @@ export default function ForgotPasswordPage() {
       setIsPasswordResetSuccess(true);
     },
     onError: (e) => {
-      console.log(e);
-
       toast.error("Failed to send reset password email to user");
     },
   });
@@ -122,11 +120,16 @@ export default function ForgotPasswordPage() {
             <h1 className="text-center text-xl md:text-2xl lg:text-3xl font-bold mb-3">
               Successfully sent password reset email
             </h1>
-            <p className="text-lg">
+            <p className="text-lg text-center">
               We successfully sent the reset password verification mail to your
               email box. Please check the email and if it doesn&apos;t arrive,
               try again.
             </p>
+            <div className="flex items-center justify-center mt-5">
+              <Button onClick={() => setIsPasswordResetSuccess(false)}>
+                Resend email
+              </Button>
+            </div>
           </div>
         </>
       )}

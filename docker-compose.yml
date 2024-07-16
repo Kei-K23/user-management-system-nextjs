@@ -11,6 +11,12 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
     restart: unless-stopped
+  mail-dev:
+    container_name: mail_dev_ums
+    image: maildev/maildev
+    ports:
+      - "1080:1080"
+      - "1025:1025"
 
 volumes:
   postgres:
