@@ -1,62 +1,10 @@
 import { db } from "@/db/drizzle";
 import { users } from "@/db/schema";
-import { generateRandomNumber } from "@/lib/utils";
-import { sendEmail } from "@/services/mail/mail-backend";
-import VerificationTokenEmail from "@/services/mail/verification-email";
-import { insertUser, selectAllUserWithoutCurrentUser, selectUserById } from "@/services/user";
-import { insertVerificationToken } from "@/services/verification-token";
-import { EmailCategory } from "@/types";
-import { render } from "@react-email/components";
-import * as argon2 from "argon2";
+import { selectAllUserWithoutCurrentUser, selectUserById } from "@/services/user";
 import { eq } from "drizzle-orm";
 import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
-
-export async function POST(request: Request) {
-    const jsonData = await request.json();
-    const username = jsonData.username;
-    const email = jsonData.email;
-    const phone = jsonData.phone;
-    const password = jsonData.password;
-
-    // Check validation for form data
-    if (!username || !email || !phone || !password) {
-        return Response.json({ error: 'Invalid request data' }, { status: 400 });
-    }
-
-    // Hash the password
-    const hashPassword = await argon2.hash(password);
-    // Insert user to your database here
-    const newUser = await insertUser({
-        username: username,
-        email,
-        phone,
-        password: hashPassword,
-    });
-
-    // Generate a random verification token
-    const verificationToken = generateRandomNumber();
-
-    // Create a new user account verification token
-    await insertVerificationToken({
-        userId: newUser[0].id,
-        token: verificationToken,
-        category: EmailCategory.EMAIL_VERIFICATION
-    });
-
-    // Render email template
-    const emailHtml = render(VerificationTokenEmail({ verificationCode: verificationToken }));
-
-    // Send email
-    sendEmail({
-        emailHtml,
-        subject: "Account Verification",
-        to: email
-    });
-
-    return Response.json({ data: newUser }, { status: 201 });
-}
 
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
@@ -92,7 +40,6 @@ export async function DELETE(request: NextRequest) {
         return Response.json({ error: "User not found to update" }, { status: 404 });
     }
 
-
     if (!jwtToken) {
         return Response.json({ error: 'Missing JWT token' }, { status: 401 });
     }
@@ -110,6 +57,7 @@ export async function DELETE(request: NextRequest) {
         return Response.json({ error: 'Expired JWT token' }, { status: 401 });
     }
 
+    // Delete the user
     await db.delete(users).where(eq(users.id, +userId));
 
     if (payload.userId == userId) {
@@ -121,7 +69,6 @@ export async function DELETE(request: NextRequest) {
 
     return Response.json({ message: "Successfully delete the user", ownAccount: 0 }, { status: 200 });
 }
-
 
 export async function PUT(request: NextRequest) {
     const jsonData = await request.json();
@@ -171,10 +118,17 @@ export async function PUT(request: NextRequest) {
         return Response.json({ error: "User not found to update" }, { status: 404 });
     }
 
+    const updatedUser = await db.update(users).set({
+        email: email.trim(),
+        phone: phone.trim(),
+        username: username.trim(),
+        role: role || existingUser[0].role
+    }).where(eq(users.id, +userId));
+
     // Create a new JWT token because of current login user information is updated
     if (payload.userId == userId) {
 
-        const token = await new SignJWT({ userId: existingUser[0].id, email: existingUser[0].email, role: existingUser[0].role })
+        const token = await new SignJWT({ userId: existingUser[0].id, email: email.trim(), role: role.trim() })
             .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
             .setExpirationTime(exp)
             .setIssuedAt(iat)
@@ -190,13 +144,6 @@ export async function PUT(request: NextRequest) {
             maxAge: 86400000, // 1 days
         })
     }
-
-    const updatedUser = await db.update(users).set({
-        email,
-        phone,
-        username,
-        role: role || existingUser[0].role
-    }).where(eq(users.id, +userId));
 
     return Response.json({ data: updatedUser }, { status: 200 });
 }

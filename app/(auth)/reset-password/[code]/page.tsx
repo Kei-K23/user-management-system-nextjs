@@ -115,7 +115,7 @@ const ResetPasswordPage = ({ params }: ResetPasswordPageProps) => {
                     "Reset"
                   )}
                 </Button>
-                <Link href="/sign-in" aria-disabled={isPending}>
+                <Link href="/forgot-password" aria-disabled={isPending}>
                   Resend password reset email!
                 </Link>
               </div>

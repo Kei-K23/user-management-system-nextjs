@@ -20,12 +20,12 @@ export async function POST(request: Request) {
     }
 
     // Hash the password
-    const hashPassword = await argon2.hash(password);
+    const hashPassword = await argon2.hash(password.trim());
     // Insert user to your database here
     const newUser = await insertUser({
-        username: username,
-        email,
-        phone,
+        username: username.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
         password: hashPassword,
     });
 

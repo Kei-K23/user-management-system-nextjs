@@ -5,6 +5,7 @@ import {
   Form,
   Input,
   Modal,
+  Popconfirm,
   Select,
   Table,
   TableColumnsType,
@@ -146,10 +147,13 @@ export default function DataTable({ dataSource }: DataTableProps) {
       title: "ID",
       dataIndex: "id",
       key: "id",
+      width: 50,
+      fixed: "left",
     },
     {
       title: "Username",
       dataIndex: "username",
+      width: 170,
       key: "username",
       filters: usernameFilters,
       filterMode: "menu",
@@ -165,11 +169,13 @@ export default function DataTable({ dataSource }: DataTableProps) {
       title: "Phone",
       dataIndex: "phone",
       key: "phone",
+      width: 170,
     },
     {
       title: "Role",
       dataIndex: "role",
       key: "role",
+      width: 100,
       filters: [
         {
           text: "USER",
@@ -188,6 +194,7 @@ export default function DataTable({ dataSource }: DataTableProps) {
       title: "Activated",
       dataIndex: "isActivated",
       key: "isActivated",
+      width: 130,
       render: (isActivated: boolean) => (isActivated ? "Yes" : "No"),
       filters: [
         {
@@ -207,7 +214,8 @@ export default function DataTable({ dataSource }: DataTableProps) {
       title: "Created At",
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (date: Date) => date.toLocaleString("en-CA"),
+      width: 140,
+      render: (date: Date) => new Date(date).toLocaleDateString("en-CA"),
       sorter: (a, b) =>
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
     },
@@ -215,7 +223,8 @@ export default function DataTable({ dataSource }: DataTableProps) {
       title: "Updated At",
       dataIndex: "updatedAt",
       key: "updatedAt",
-      render: (date: Date) => date.toLocaleString("en-CA"),
+      width: 140,
+      render: (date: Date) => new Date(date).toLocaleDateString("en-CA"),
       sorter: (a, b) =>
         new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
     },
@@ -231,13 +240,18 @@ export default function DataTable({ dataSource }: DataTableProps) {
             >
               Edit
             </Button>
-            <Button
-              disabled={deletePending || onEditPending}
-              danger
-              onClick={() => onDelete(record.id)}
+            <Popconfirm
+              title="Delete user"
+              description="Are you sure to delete the user?"
+              onConfirm={() => onDelete(record.id)}
+              okText="Yes"
+              cancelText="No"
+              disabled={deletePending}
             >
-              Delete
-            </Button>
+              <Button disabled={deletePending || onEditPending} danger>
+                Delete
+              </Button>
+            </Popconfirm>
           </div>
         );
       },
@@ -270,9 +284,10 @@ export default function DataTable({ dataSource }: DataTableProps) {
   return (
     <div className="mx-auto w-[90%] mb-10">
       <Table
-        className="border rounded-lg mb-10"
         columns={columns}
         dataSource={dataSource}
+        bordered
+        scroll={{ x: 1500 }}
       />
       <div className="h-[50px]" />
       <Modal

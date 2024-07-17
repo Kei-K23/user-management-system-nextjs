@@ -4,7 +4,16 @@ import DataTable from "@/components/table/data-table";
 import { useMounted } from "@/lib/custom-hook";
 import { DeleteOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Avatar, Button, Card, Form, Input, Modal, Select } from "antd";
+import {
+  Avatar,
+  Button,
+  Card,
+  Form,
+  Input,
+  Modal,
+  Popconfirm,
+  Select,
+} from "antd";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -96,6 +105,7 @@ export default function MainPage() {
           username: values.username,
           email: values.email,
           phone: `${values.prefix}-${values.phone}`,
+          role: values.role,
         }),
       }
     );
@@ -210,11 +220,19 @@ export default function MainPage() {
                   <h2 className="text-xl md:text-2xl">
                     {user?.data[0].username}
                   </h2>
-                  <DeleteOutlined
+                  <Popconfirm
+                    title="Delete user"
+                    description="Are you sure to delete the user?"
+                    onConfirm={() => onDelete()}
+                    okText="Yes"
+                    cancelText="No"
                     disabled={deletePending}
-                    onClick={() => onDelete()}
-                    className="cursor-pointer text-xl text-red-500 hover:text-red-600"
-                  />
+                  >
+                    <DeleteOutlined
+                      disabled={deletePending}
+                      className="cursor-pointer text-xl text-red-500 hover:text-red-600"
+                    />
+                  </Popconfirm>
                 </div>
               }
               description={
