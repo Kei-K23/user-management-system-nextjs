@@ -200,7 +200,7 @@ export default function MainPage() {
       </h1>
       <div className="flex justify-center items-center my-5">
         {isMounted ? (
-          <Card style={{ minWidth: 400 }}>
+          <Card className="border-2 " style={{ minWidth: 360 }}>
             <Card.Meta
               avatar={
                 <Avatar

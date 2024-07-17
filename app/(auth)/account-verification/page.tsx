@@ -102,7 +102,7 @@ export default function AccountVerification() {
       <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-3">
         Verify your account
       </h1>
-      <p className="text-lg">
+      <p className="text-lg text-center max-w-[380px]">
         Enter verification code that have send to your email
       </p>
       <div className="mt-5">

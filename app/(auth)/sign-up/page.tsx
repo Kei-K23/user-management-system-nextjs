@@ -161,7 +161,7 @@ const SignUpPage = () => {
               >
                 <Input.Password disabled={isPending} />
               </Form.Item>
-              <div className="my-3 mb-5 flex justify-between items-center">
+              <div className="my-3 mb-5 flex flex-col md:flex-row md:justify-between md:items-center gap-3">
                 <Button disabled={isPending} type="primary" htmlType="submit">
                   {isPending ? (
                     <LoadingOutlined className="text-lg " />

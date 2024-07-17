@@ -127,8 +127,7 @@ export async function PUT(request: NextRequest) {
 
     // Create a new JWT token because of current login user information is updated
     if (payload.userId == userId) {
-
-        const token = await new SignJWT({ userId: existingUser[0].id, email: email.trim(), role: role.trim() })
+        const token = await new SignJWT({ userId: existingUser[0].id, email: email.trim(), role: role?.trim() || existingUser[0].role })
             .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
             .setExpirationTime(exp)
             .setIssuedAt(iat)
